@@ -1,0 +1,4 @@
+/nanopub-router
+/dist/
+*.test
+*.out
