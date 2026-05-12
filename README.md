@@ -61,11 +61,18 @@ docker build -t nanopub-router .            # image
 docker run --rm -p 8080:8080 nanopub-router # served on :8080
 ```
 
+Or with Docker Compose (host port `7891`):
+
+```bash
+./run.sh                                    # docker compose down/build/up
+```
+
 Then:
 
 ```bash
-curl -i http://localhost:8080/nanopub-registry/
-curl    http://localhost:8080/status.json
+curl -i http://localhost:8080/nanopub-registry/    # plain docker run
+curl -i http://localhost:7891/nanopub-registry/    # docker compose
+curl    http://localhost:7891/status.json
 ```
 
 ## License
