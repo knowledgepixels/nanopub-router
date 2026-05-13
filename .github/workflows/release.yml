@@ -65,12 +65,12 @@ jobs:
           npm ci
           npx semantic-release
 
-      - name: Update master branch after release
+      - name: Update main branch after release
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch --unshallow origin || true
-          git fetch origin master
-          git checkout -B master FETCH_HEAD
+          git fetch origin main
+          git checkout -B main FETCH_HEAD
           git merge release --no-edit
-          git push origin master
+          git push origin main
