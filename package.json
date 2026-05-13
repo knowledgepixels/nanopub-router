@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "@semantic-release/exec": "^7.0.3",
+    "semantic-release": "^25.0.0",
+    "semantic-release-preconfigured-conventional-commits": "^1.1.156"
+  }
+}
