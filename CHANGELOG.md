@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/knowledgepixels/nanopub-router/compare/nanopub-router-1.0.0...nanopub-router-1.0.1) (2026-05-13)
+
+### Bug Fixes
+
+* make docker compose pull the published image instead of building ([3459e97](https://github.com/knowledgepixels/nanopub-router/commit/3459e9761ef46f4c340acf26daf72eebe5afdfe9))
+
 ## 1.0.0 (2026-05-13)
 
 ### Features
