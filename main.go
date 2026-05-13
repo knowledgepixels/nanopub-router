@@ -1,5 +1,5 @@
 // Nanopub Router: a small HTTP redirector that forwards requests
-// targeting service-type prefixes (e.g. /nanopub-registry/..., /nanopub-query/...)
+// targeting service-type prefixes (e.g. /registry/..., /query/...)
 // to a healthy instance, via 307 Temporary Redirect.
 //
 // Instance status is discovered by polling a Nanopub Monitor's /.json feed.
@@ -81,8 +81,8 @@ func defaultConfig() Config {
 		RequireConsensus: getenvBool("ROUTER_REQUIRE_CONSENSUS", true),
 		HTTPTimeout:      getenvDuration("ROUTER_HTTP_TIMEOUT", 10*time.Second),
 		TrustedTypePrefix: map[string]string{
-			"/nanopub-registry/": "https://w3id.org/np/o/service/terms/nanopub-registry",
-			"/nanopub-query/":    "https://w3id.org/np/o/service/terms/nanopub-query",
+			"/registry/": "https://w3id.org/np/o/service/terms/nanopub-registry",
+			"/query/":    "https://w3id.org/np/o/service/terms/nanopub-query",
 		},
 	}
 }

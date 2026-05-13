@@ -29,8 +29,8 @@ slow responders. Swap `pick()` if you want a different policy.
 
 | Path | Effect |
 | --- | --- |
-| `/nanopub-registry/...` | 307 to a healthy `nanopub-registry` instance |
-| `/nanopub-query/...` | 307 to a healthy `nanopub-query` instance |
+| `/registry/...` | 307 to a healthy `nanopub-registry` instance |
+| `/query/...` | 307 to a healthy `nanopub-query` instance |
 | `/healthz` | 200 iff snapshot is fresh |
 | `/status.json` | Snapshot summary and per-prefix candidate counts |
 | `/` | Plain-text help page |
@@ -70,8 +70,8 @@ Or with Docker Compose (host port `7899`):
 Then:
 
 ```bash
-curl -i http://localhost:8080/nanopub-registry/    # plain docker run
-curl -i http://localhost:7899/nanopub-registry/    # docker compose
+curl -i http://localhost:8080/registry/    # plain docker run
+curl -i http://localhost:7899/registry/    # docker compose
 curl    http://localhost:7899/status.json
 ```
 
