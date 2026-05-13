@@ -1,6 +1,5 @@
 services:
   router:
-    build: .
     image: nanopub/router
     restart: unless-stopped
     ports:

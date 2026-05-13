@@ -5,5 +5,5 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 set -e
 
 docker compose down
-docker compose build
+docker build -t nanopub/router .
 docker compose up
