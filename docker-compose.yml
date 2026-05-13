@@ -4,4 +4,4 @@ services:
     image: nanopub/router
     restart: unless-stopped
     ports:
-      - "7891:8080"
+      - "7899:8080"
