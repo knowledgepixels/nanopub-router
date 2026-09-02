@@ -1,0 +1,68 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>ashleycaselli/renovate-config"
+  ],
+  "automerge": false,
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Go dependencies are compiled into the shipped binary, so they should trigger a new patch release",
+      "matchFileNames": [
+        "go.mod"
+      ],
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "core-deps"
+    },
+    {
+      "description": "The final stage is the image that gets published, so a base image update is a real release",
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "matchDepTypes": [
+        "final"
+      ],
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "core-deps"
+    },
+    {
+      "description": "The builder stage only compiles the binary and is discarded, so it should not trigger a release",
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "matchDepTypes": [
+        "stage"
+      ],
+      "semanticCommitType": "build",
+      "semanticCommitScope": "deps"
+    },
+    {
+      "description": "Release tooling lives in package.json and is not part of the artifact, so it should not trigger a release",
+      "matchFileNames": [
+        "package.json"
+      ],
+      "semanticCommitType": "build",
+      "semanticCommitScope": "deps"
+    },
+    {
+      "description": "Workflow actions only affect CI and should not trigger a release",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "semanticCommitType": "ci",
+      "semanticCommitScope": "deps"
+    },
+    {
+      "description": "docker-compose.yml points at this project's own published image; updating it here would chase our own releases",
+      "matchManagers": [
+        "docker-compose"
+      ],
+      "matchPackageNames": [
+        "nanopub/router"
+      ],
+      "enabled": false
+    }
+  ]
+}
