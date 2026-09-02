@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/knowledgepixels/nanopub-router/badge.svg?branch=main)](https://coveralls.io/github/knowledgepixels/nanopub-router?branch=main)
+
 # Nanopub Router
 
 A tiny HTTP redirector for the nanopublication network. Requests to a known
