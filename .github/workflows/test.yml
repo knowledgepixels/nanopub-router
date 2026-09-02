@@ -23,4 +23,22 @@ jobs:
           go-version: ${{ matrix.go }}
 
       - name: Test
-        run: go test ./...
+        run: go test -covermode=atomic -coverprofile=coverage.out ./...
+
+      - name: Send coverage to Coveralls (parallel)
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
+        with:
+          file: coverage.out
+          format: golang
+          parallel: true
+          flag-name: run-${{ join(matrix.*, '-') }}
+
+  coveralls:
+    name: Indicate completion to coveralls.io
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close parallel build
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
+        with:
+          parallel-finished: true
