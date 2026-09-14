@@ -40,6 +40,25 @@ slow responders. Swap `pick()` if you want a different policy.
 The path portion after the prefix and any query string are appended to the
 chosen instance's base URL.
 
+## Version
+
+Every response carries the router's version:
+
+```
+Nanopub-Router-Version: 1.4.0
+```
+
+This follows the `Nanopub-<service>-Version` convention that the
+[Nanopub Monitor](https://github.com/knowledgepixels/nanopub-monitor) reads to
+report the version of each instance it scans, as `nanopub-registry`,
+`nanopub-query` and Nanodash already do. It is set on every response, including
+the `307` redirects and the `503` from a stale `/healthz` — an instance that
+cannot route is exactly when knowing its version is most useful.
+
+The value is baked in at build time from the release tag
+(`-ldflags "-X main.version=..."`, passed as the `VERSION` build arg by
+`release.config.js`). A plain `go build` reports `dev`.
+
 ## Configuration
 
 All flags also work as `ROUTER_*` env vars (e.g. `ROUTER_POLL_INTERVAL=2m`).
