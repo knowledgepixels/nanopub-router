@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 )
@@ -79,5 +81,70 @@ func TestCandidatesFilter(t *testing.T) {
 	got = r.candidates("https://w3id.org/np/o/service/terms/nanopub-query")
 	if len(got) != 1 || got[0].URL != "https://e/" {
 		t.Errorf("query candidates = %+v", got)
+	}
+}
+
+func TestVersionHeaderOnEveryResponse(t *testing.T) {
+	r := NewRouter(defaultConfig())
+	consensus := "consensus"
+	r.snapshot.Store(&Snapshot{
+		FetchedAt: time.Now(),
+		Servers: []ServerEntry{
+			{URL: "https://a/", Type: "https://w3id.org/np/o/service/terms/nanopub-registry-1.0", Status: "OK", HashGroup: &consensus},
+		},
+	})
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/registry/", r.handleRedirect("https://w3id.org/np/o/service/terms/nanopub-registry", "/registry/"))
+	mux.HandleFunc("/healthz", r.handleHealth)
+	mux.HandleFunc("/", handleRoot(r.cfg))
+	h := withVersionHeader(mux)
+
+	cases := []struct {
+		name       string
+		path       string
+		wantStatus int
+	}{
+		{name: "help page", path: "/", wantStatus: http.StatusOK},
+		{name: "health", path: "/healthz", wantStatus: http.StatusOK},
+		// The version has to survive a handler that writes its status straight away,
+		// which is every routed request.
+		{name: "redirect", path: "/registry/np/abc", wantStatus: http.StatusTemporaryRedirect},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, c.path, nil))
+			if rec.Code != c.wantStatus {
+				t.Errorf("status = %d, want %d", rec.Code, c.wantStatus)
+			}
+			if got := rec.Header().Get(VersionHeader); got != version {
+				t.Errorf("%s = %q, want %q", VersionHeader, got, version)
+			}
+		})
+	}
+}
+
+// An unhealthy router is exactly when the monitor most needs to say which instance
+// and version it reached, so the header must not depend on the health check passing.
+func TestVersionHeaderWhenUnhealthy(t *testing.T) {
+	r := NewRouter(defaultConfig())
+
+	rec := httptest.NewRecorder()
+	withVersionHeader(http.HandlerFunc(r.handleHealth)).
+		ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/healthz", nil))
+
+	if rec.Code != http.StatusServiceUnavailable {
+		t.Fatalf("status = %d, want %d", rec.Code, http.StatusServiceUnavailable)
+	}
+	if got := rec.Header().Get(VersionHeader); got != version {
+		t.Errorf("%s = %q, want %q", VersionHeader, got, version)
+	}
+}
+
+func TestVersionDefaultsToDev(t *testing.T) {
+	if version == "" {
+		t.Error("version must never be empty; it is reported as a header value")
 	}
 }
