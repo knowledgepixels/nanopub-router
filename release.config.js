@@ -5,7 +5,7 @@ config.plugins.push(
   [
     "@semantic-release/exec",
     {
-      "publishCmd": "docker buildx build --push --tag $IMAGE_NAME:${nextRelease.version} --tag $IMAGE_NAME:latest ."
+      "publishCmd": "docker buildx build --push --build-arg VERSION=${nextRelease.version} --tag $IMAGE_NAME:${nextRelease.version} --tag $IMAGE_NAME:latest ."
     }
   ],
   "@semantic-release/github",

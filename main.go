@@ -25,6 +25,15 @@ import (
 	"time"
 )
 
+// version is the router's release version, set at build time with
+// -ldflags "-X main.version=...". It stays "dev" for a plain `go build`.
+var version = "dev"
+
+// VersionHeader carries the router's version on every response, following the
+// Nanopub-<service>-Version convention the Nanopub Monitor reads to report the
+// version of an instance it scans.
+const VersionHeader = "Nanopub-Router-Version"
+
 // ServerEntry is a single server record as published by the monitor's /.json feed.
 // Field names match the monitor's JsonStatus output.
 type ServerEntry struct {
@@ -342,13 +351,23 @@ func main() {
 
 	srv := &http.Server{
 		Addr:              cfg.Addr,
-		Handler:           withAccessLog(mux),
+		Handler:           withAccessLog(withVersionHeader(mux)),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
-	log.Printf("nanopub-router listening on %s; monitors=%v; poll=%s", cfg.Addr, cfg.MonitorURLs, cfg.PollInterval)
+	log.Printf("nanopub-router %s listening on %s; monitors=%v; poll=%s", version, cfg.Addr, cfg.MonitorURLs, cfg.PollInterval)
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatal(err)
 	}
+}
+
+// withVersionHeader sets the version header on every response. It is set before
+// the handler runs so that it survives handlers that write their status
+// immediately, such as the redirects and the health check's error paths.
+func withVersionHeader(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Set(VersionHeader, version)
+		h.ServeHTTP(w, req)
+	})
 }
 
 func withAccessLog(h http.Handler) http.Handler {
