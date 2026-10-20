@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS build
+FROM golang:1.27-alpine AS build
 # Set by the release pipeline so the binary can report its version; see release.config.js.
 ARG VERSION=dev
 WORKDIR /src
